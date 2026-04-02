@@ -1,0 +1,20 @@
+{
+  "name": "@j41/secure-setup",
+  "version": "0.1.0",
+  "description": "Security auto-setup for J41 dispatcher and jailbox — gVisor, bubblewrap, seccomp, AppArmor",
+  "type": "module",
+  "main": "lib/index.js",
+  "bin": {
+    "j41-secure-setup": "./bin/j41-secure-setup.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "test:integration": "node --test test/*.integration.test.js",
+    "build": "echo 'No build step — pure JS'"
+  },
+  "packageManager": "yarn@1.22.22",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}

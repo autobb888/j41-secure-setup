@@ -1,0 +1,54 @@
+#include <tunables/global>
+
+profile j41-jailbox-profile flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  # Node.js runtime
+  /usr/local/bin/node ix,
+  /usr/bin/node ix,
+  /app/** r,
+  /app/node_modules/** r,
+
+  # Jailbox project directory (read-only by default, rw when --write is passed)
+  /jailbox/** r,
+
+  # Temp directory (noexec tmpfs)
+  /tmp/** rw,
+
+  # Proc and dev (limited)
+  @{PROC}/self/fd/ r,
+  @{PROC}/self/fd/** rw,
+  /dev/null rw,
+  /dev/urandom r,
+  /dev/random r,
+
+  # System libs (read-only)
+  /usr/lib/** r,
+  /usr/local/lib/** r,
+  /lib/** r,
+  /lib64/** r,
+  /etc/ssl/** r,
+  /etc/ca-certificates/** r,
+  /etc/resolv.conf r,
+  /etc/hosts r,
+  /etc/nsswitch.conf r,
+  /etc/passwd r,
+  /etc/group r,
+
+  # Deny dangerous operations
+  deny /etc/shadow r,
+  deny /root/** rwx,
+  deny /home/** rwx,
+  deny mount,
+  deny umount,
+  deny pivot_root,
+  deny ptrace,
+  deny signal peer=unconfined,
+
+  # Deny all network (NetworkMode: none enforces this at Docker level too)
+  deny network inet,
+  deny network inet6,
+  deny network raw,
+  deny network packet,
+}
