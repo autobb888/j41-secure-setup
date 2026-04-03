@@ -1,7 +1,7 @@
 {
-  "seccomp-agent.json": "d2e0617b4030789f14d8a3ed7a82fc7b93a68352875ec0008d716d5c4af27514",
-  "seccomp-jailbox.json": "0db163203eff4f9ac133ff4c240a469e7518429a7b1fe35529862f7bcc3188a5",
-  "seccomp-bwrap.json": "1e5fe16622576d23a728be61333c366fea084e4faac5345f2e15f2f95c9523f8",
   "apparmor-agent": "680cc2b9053823c461160c3b5e570bd6a801ccc5423aa1fb4bc674dd3e0a46c3",
-  "apparmor-jailbox": "2657bb93ae998665f5f3d7538dcb3b282371b511a8716afbe0a74d622c5f6ac3"
+  "apparmor-jailbox": "2657bb93ae998665f5f3d7538dcb3b282371b511a8716afbe0a74d622c5f6ac3",
+  "seccomp-agent.json": "df589d11f19937fada7712bc69ef370a50f6de57e620d5ac7ecc930cd816fd7f",
+  "seccomp-bwrap.json": "e788579e93e20e7d9e0af02683078f4b4ff82143f4958375797056f44000899b",
+  "seccomp-jailbox.json": "14f2d87fbb8d59674b497ef6c1b6ddec3e25616ad39edabca416eebb1d62662d"
 }

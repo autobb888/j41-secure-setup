@@ -142,6 +142,15 @@
     {
       "names": ["unshare", "mount", "umount2", "pivot_root"],
       "action": "SCMP_ACT_ALLOW"
+    },
+    {
+      "names": [
+        "openat2", "clone3", "close_range", "rseq", "futex_waitv",
+        "setgroups", "setgid", "setuid", "capget", "capset",
+        "prctl", "chdir", "fchdir", "getrlimit", "setrlimit"
+      ],
+      "action": "SCMP_ACT_ALLOW",
+      "comment": "Required by container runtime (runc) during init"
     }
   ]
 }
