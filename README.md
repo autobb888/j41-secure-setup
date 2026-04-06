@@ -118,4 +118,10 @@ Profile integrity is verified on every startup against SHA256 hashes in `profile
 - Node.js >= 18
 - Docker (daemon running)
 - Linux or macOS
-- sudo access (for gVisor install, iptables, AppArmor — requested during first-run)
+- sudo access is **optional** — profiles fall back to `~/.j41/` when `/etc/j41` is not writable, iptables failure is non-fatal
+
+## Recent Changes
+
+- **No sudo required** — all 3 modules (`detect-isolation.js`, `self-test.js`, `index.js`) fall back to `~/.j41/` from `/etc/j41`
+- **iptables is warn, not fail** — dev machines without sudo still get full security except firewall rules
+- **Network setup non-fatal** — `setup()` continues if iptables fails, logs a warning with fix instructions
