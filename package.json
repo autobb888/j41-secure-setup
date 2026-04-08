@@ -1,5 +1,5 @@
 {
-  "name": "@j41/secure-setup",
+  "name": "@junction41/secure-setup",
   "version": "0.1.0",
   "description": "Security auto-setup for J41 dispatcher and jailbox — gVisor, bubblewrap, seccomp, AppArmor",
   "type": "module",

@@ -1,4 +1,4 @@
-# @j41/secure-setup
+# @junction41/secure-setup
 
 Security auto-setup for J41 Dispatcher and Jailbox. On first run it detects the host platform, installs the best available isolation layer (gVisor or bubblewrap), deploys seccomp and AppArmor profiles, creates financial and network allowlists, and runs a full self-test. Operators and buyers do not need to do anything — security is wired directly into the first-run flow of both products.
 
@@ -64,7 +64,7 @@ If iptables rules require elevated permissions, setup will warn and instruct you
 Both products call this on startup before accepting work:
 
 ```javascript
-import { setup, isInitialized, quickCheck } from '@j41/secure-setup';
+import { setup, isInitialized, quickCheck } from '@junction41/secure-setup';
 
 // On first run
 if (!isInitialized('dispatcher')) {
