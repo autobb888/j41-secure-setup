@@ -1,6 +1,6 @@
 {
   "name": "@junction41/secure-setup",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Security auto-setup for J41 dispatcher and jailbox — gVisor, bubblewrap, seccomp, AppArmor",
   "type": "module",
   "main": "lib/index.js",
@@ -15,6 +15,7 @@
     "lib/",
     "profiles/",
     "scripts/",
+    "assets/",
     "README.md"
   ],
   "scripts": {

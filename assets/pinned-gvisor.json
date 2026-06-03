@@ -1,0 +1,13 @@
+{
+  "_comment": "J41-qualified gVisor releases. Each release in the `releases` array MUST be a tuple of {release tag from https://gvisor.dev/, expected sha512 per architecture, gVisor signature fingerprint at time of qualification}. Operators MUST NOT install runsc via secure-setup at a release not listed here. The bootstrap installer refuses to install via the binary-fallback path unless `release` matches one of these entries. Adding a new entry requires (a) downloading runsc from gvisor.dev, (b) verifying its GPG signature offline against the official gVisor pubkey at f4f7a52e4b2bcde4a93a1f3acba4dbe6c4a2bb3a, (c) computing sha512 and recording it here, (d) opening a PR. The rotating `latest` channel is NOT supported by this package.",
+  "_reference": "Audit 2026-06-02 C6 + H5 + H6.",
+  "releases": [
+    {
+      "_comment": "Placeholder example — operators MUST replace with a real qualified release before relying on this. Set version, then run `curl -fsSL https://storage.googleapis.com/gvisor/releases/release/<release>/<arch>/runsc | sha512sum` per architecture and paste the digest.",
+      "release": "TBD",
+      "sha512_x86_64": "TBD",
+      "sha512_aarch64": "TBD"
+    }
+  ],
+  "gpg_fingerprint": "EFE4 35E0 6DE5 AAB1 9192  6AE6 84BC 79E8 9603 D85F"
+}
