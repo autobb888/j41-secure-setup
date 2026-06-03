@@ -2,6 +2,26 @@
 
 Security auto-setup for J41 Dispatcher and Jailbox. On first run it detects the host platform, installs the best available isolation layer (gVisor or bubblewrap), deploys seccomp and AppArmor profiles, creates financial and network allowlists, and runs a full self-test. Operators and buyers do not need to do anything — security is wired directly into the first-run flow of both products.
 
+## Security update — 2026-06-02 audit (v0.3.0)
+
+This release closes 1 critical + 8 highs + 6 mediums from the 2026-06-02 cross-repo security audit. The behavioral changes operators should know about:
+
+**The gVisor binary install path is hash-pinned (breaking).** Previously fetched runsc + runsc.sha512 from the SAME Google Cloud Storage URL — a same-origin checksum is a transport check, not authenticity. Now: `assets/pinned-gvisor.json` ships inside the npm tarball with J41-qualified release entries (sha512 per architecture + gVisor signing-key fingerprint). The binary path **refuses to install** unless the requested release (env `GVISOR_RELEASE`, default first pin entry) is in the file with a real sha512. The default placeholder is `"TBD"` — operators who hit this must follow the qualification checklist in the file header (verify upstream GPG sig offline, sha512, append entry, republish).
+
+**The apt path requires a bundled GPG key (breaking).** Previously did `curl https://gvisor.dev/archive.key | sudo gpg --dearmor` with no fingerprint pin. Now: refuses to install unless `assets/gvisor-archive-keyring.gpg` is bundled in the tarball. When present, the keyring is `sudo cp`'d (not curl-piped) into `/usr/share/keyrings`.
+
+**`deployProfiles` checks `known-good-hashes.json` BEFORE copying** (H7). Source files in `profiles/` are hashed and compared against the in-package known-good before deploy. A supply-chain compromise that ships tampered profiles + an updated known-good is no longer self-consistent. Missing or unparseable `known-good-hashes.json` is fatal.
+
+**Deployed profiles are immutable + 0600** (H3). `chattr +i` after deploy (best-effort, ext4/xfs only); mode tightened from 0644 → 0600. Target directory created `mode: 0700` with explicit chmod.
+
+**Network allowlist filtered to signed baseline** (H1). `resolveAndPinDNS` refuses entries in `~/.j41/network-allowlist.json` that aren't in the in-package `DEFAULT_ENDPOINTS` baseline. Operators who need extras opt in via `J41_ALLOWLIST_EXTRA=host:port,host:port`. A brief operator-context tamper can no longer pin an attacker IP into iptables ACCEPT.
+
+**`/etc/j41` now created mode 0o700** + explicit chmod (M-funds-1).
+
+**`isInitialized()` validates the marker file** (L-funds-2). Reads + parses the JSON, checks the timestamp is well-formed and less than 90 days old. Bare file existence is no longer trusted.
+
+**New env vars**: `GVISOR_RELEASE` (selects qualified release), `J41_ALLOWLIST_EXTRA` (additional iptables hosts).
+
 ---
 
 ## How it works
