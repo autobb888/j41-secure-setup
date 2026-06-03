@@ -1,0 +1,46 @@
+# Audit 2026-06-02 H-SECURE-SETUP-supply-8 + cross-repo M-supply-3:
+#   Publish via GitHub Actions OIDC with `npm publish --provenance` so
+#   consumers can verify (and `npm audit signatures` can check) that the
+#   tarball was built from a specific commit in this repo. Replaces the
+#   manual-publish-from-developer-machine flow which had no attestation.
+#
+# secure-setup is the bootstrap installer — its provenance MUST land before
+# the other 4 J41 packages re-publish, since they all transitively trust
+# secure-setup's sudo paths.
+#
+# Required GitHub repository configuration (one-time):
+#   1. npm.com/settings/{user}/tokens → create a granular token with
+#      "publish + provenance" scope on @junction41/secure-setup, store
+#      in this repo's Settings → Secrets → NPM_TOKEN.
+#   2. npmjs.com/package/@junction41/secure-setup/settings → require
+#      2FA-for-publish AND OIDC publisher = this GitHub repo.
+
+name: Publish to npm
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # required for OIDC → npm provenance attestation
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      # Frozen-lockfile keeps lockfile drift out of the published tarball.
+      - run: yarn install --frozen-lockfile
+
+      # No build step (pure JS) but this is the place to add `yarn build`
+      # if a future commit introduces transpilation.
+
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
