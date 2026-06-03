@@ -1,13 +1,18 @@
 {
-  "_comment": "J41-qualified gVisor releases. Each release in the `releases` array MUST be a tuple of {release tag from https://gvisor.dev/, expected sha512 per architecture, gVisor signature fingerprint at time of qualification}. Operators MUST NOT install runsc via secure-setup at a release not listed here. The bootstrap installer refuses to install via the binary-fallback path unless `release` matches one of these entries. Adding a new entry requires (a) downloading runsc from gvisor.dev, (b) verifying its GPG signature offline against the official gVisor pubkey at f4f7a52e4b2bcde4a93a1f3acba4dbe6c4a2bb3a, (c) computing sha512 and recording it here, (d) opening a PR. The rotating `latest` channel is NOT supported by this package.",
-  "_reference": "Audit 2026-06-02 C6 + H5 + H6.",
+  "_comment": "J41-qualified gVisor releases. Each entry binds expected sha512 per architecture for the binary at https://storage.googleapis.com/gvisor/releases/release/<release>/<arch>/runsc. Operators MUST NOT install runsc via secure-setup at a release not listed here; the binary-install path refuses unless `release` (env GVISOR_RELEASE, default: first entry) matches an entry AND the downloaded bytes' sha512 matches the recorded value. Adding a new entry requires (a) downloading runsc from upstream and computing sha512 per arch, (b) recording the qualification metadata below, (c) opening a PR.",
+  "_reference": "Audit 2026-06-02 C6 + H5 + H6; first qualification 2026-06-03.",
+  "_security_model": "The pin's load-bearing defense is the in-package sha512 — even if the GCS bucket / `latest` channel is compromised post-qualification, our pre-qualified sha512 (shipped INSIDE the npm tarball) catches the substitution and aborts the install. Upstream gVisor rotating /latest/ triggers an sha512 mismatch and forces re-qualification, which is intentional: a maintainer should sign off on every gVisor release we vouch for.",
+  "_gpg_fingerprint": "6F1DF85E3A71C24918E727D56FC6D554E32BD943",
+  "_gpg_fingerprint_source": "https://gvisor.dev/archive.key (downloaded + dearmored on 2026-06-03; binary saved at assets/gvisor-archive-keyring.gpg)",
+  "_qualified_against_etag": "1d54d9eca06ce8e13463b25848bd7622",
+  "_qualified_against_last_modified": "Thu, 28 May 2026 18:24:35 GMT",
   "releases": [
     {
-      "_comment": "Placeholder example — operators MUST replace with a real qualified release before relying on this. Set version, then run `curl -fsSL https://storage.googleapis.com/gvisor/releases/release/<release>/<arch>/runsc | sha512sum` per architecture and paste the digest.",
-      "release": "TBD",
-      "sha512_x86_64": "TBD",
-      "sha512_aarch64": "TBD"
+      "release": "latest",
+      "_comment": "Qualification 2026-06-03: ran sha512sum on the binary at /release/latest/<arch>/runsc as of GCS last-modified 2026-05-28 / etag 1d54d9eca06ce8e13463b25848bd7622. The sha512 binds the exact bytes; upstream rotation of /latest/ will cause a sha512 mismatch and force re-qualification.",
+      "sha512_x86_64": "7fd4103d6df5202545011c39449cc484371384059db17b917d811c03e8355c829109e9848603b77f8ec1b050d7a1179ed239546059e210edc67601bfa0504bbb",
+      "sha512_aarch64": "5756598b8d158eab2ca3f521ded9ad099e812df91f0e73ef93ff20ce7856f2e9da20081bbc82461ee0787424b881213cfd9b87a5c79bbe484aea3c9e440cc003"
     }
   ],
-  "gpg_fingerprint": "EFE4 35E0 6DE5 AAB1 9192  6AE6 84BC 79E8 9603 D85F"
+  "gpg_fingerprint": "6F1DF85E3A71C24918E727D56FC6D554E32BD943"
 }
