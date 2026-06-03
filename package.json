@@ -1,7 +1,7 @@
 {
   "name": "@junction41/secure-setup",
-  "version": "0.3.1",
-  "description": "Security auto-setup for J41 dispatcher and jailbox — gVisor, bubblewrap, seccomp, AppArmor",
+  "version": "0.3.2",
+  "description": "Security auto-setup for J41 dispatcher and jailbox \u2014 gVisor, bubblewrap, seccomp, AppArmor",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -21,7 +21,7 @@
   "scripts": {
     "test": "node --test test/*.test.js",
     "test:integration": "node --test test/*.integration.test.js",
-    "build": "echo 'No build step — pure JS'"
+    "build": "echo 'No build step \u2014 pure JS'"
   },
   "packageManager": "yarn@1.22.22",
   "engines": {
@@ -32,6 +32,14 @@
     "type": "git",
     "url": "https://github.com/junction41/j41-secure-setup"
   },
-  "keywords": ["j41", "junction41", "security", "gvisor", "docker", "bubblewrap", "sandbox"],
+  "keywords": [
+    "j41",
+    "junction41",
+    "security",
+    "gvisor",
+    "docker",
+    "bubblewrap",
+    "sandbox"
+  ],
   "license": "MIT"
 }
