@@ -2,6 +2,17 @@
 
 Security auto-setup for J41 Dispatcher and Jailbox. On first run it detects the host platform, installs the best available isolation layer (gVisor or bubblewrap), deploys seccomp and AppArmor profiles, creates financial and network allowlists, and runs a full self-test. Operators and buyers do not need to do anything — security is wired directly into the first-run flow of both products.
 
+## Security update — 2026-06-05 install-flow fixes (v0.3.4)
+
+Found by end-to-end testing the sudo-install on a KVM-less host (the fail-closed `/etc/j41` contract from 0.3.3 surfaced these). All make the privileged install actually work for a non-root product:
+
+- **`/etc/j41` is `0711`, profile files `0644`** (were `0700`/`0600`). The profiles are public (they ship in this tarball), so there's no content to hide; the non-root jailbox/dispatcher CLI must `existsSync` + read them to detect and integrity-verify. Under `0700`/`0600` the CLI fail-closed on a profile that was in fact deployed. Tamper-resistance is `chattr +i` + hash pinning, not read perms.
+- **Runtime detection uses `docker info`**, not reading root-only `/etc/docker/daemon.json` — so `quickCheck` no longer reports bwrap mode while gVisor is actually the default runtime. Matches jailbox `docker.ts`.
+- **First-run marker honors `SUDO_USER`** — written to (and chowned to) the invoking user's `~/.j41`, not `/root/.j41`, so the user-run product sees it instead of re-triggering the first-run gate.
+- **Re-deploys clear the `chattr +i` immutable bit** before re-copying, so `setup`/`--fix` is idempotent instead of `EPERM`-ing on a locked profile.
+
+Validated live: `quickCheck` 10/10 mode gvisor as a non-root user, and a container booted with jailbox's exact HostConfig runs under gVisor (`4.19.0-gvisor`), network blocked, rootfs read-only, all caps dropped, with the MCP server blocking every repo-escape payload.
+
 ## Security update — 2026-06-05 jailbox confinement review (v0.3.3)
 
 Companion changes to jailbox 2.1.3, closing two false-confidence gaps and one coverage gap:
