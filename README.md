@@ -2,6 +2,16 @@
 
 Security auto-setup for J41 Dispatcher and Jailbox. On first run it detects the host platform, installs the best available isolation layer (gVisor or bubblewrap), deploys seccomp and AppArmor profiles, creates financial and network allowlists, and runs a full self-test. Operators and buyers do not need to do anything — security is wired directly into the first-run flow of both products.
 
+## Security update — 2026-06-05 jailbox confinement review (v0.3.3)
+
+Companion changes to jailbox 2.1.3, closing two false-confidence gaps and one coverage gap:
+
+**Self-check is fail-closed on `/etc/j41` (Linux).** `quickCheck` previously fell back to `~/.j41` when `/etc/j41` was absent and reported the seccomp profile "active" — but the runtime launchers (jailbox `docker.ts`, dispatcher `cli.js`) load seccomp **only** from `/etc/j41`. So the self-check could report 8/10 while the container ran Docker-default seccomp. `quickCheck` now checks `/etc/j41` only on Linux (no `~/.j41` fallback), and `setup()` refuses to silently deploy profiles to `~/.j41` (re-run with `sudo` to write `/etc/j41`).
+
+**`gvisor-or-bwrap` is product-aware.** bwrap counts as kernel isolation only for the **dispatcher** (whose agent container actually execs under bwrap). For **jailbox** — whose container runs `node` directly with no bwrap — bwrap no longer satisfies the kernel-isolation check; gVisor (or the macOS Docker Desktop VM) is required.
+
+**gVisor installs without KVM (systrap platform).** Setup previously skipped gVisor entirely when `/dev/kvm` was absent and fell back to bubblewrap. gVisor's modern **systrap** platform needs no KVM, so setup now always attempts gVisor — selecting `--platform=kvm` when `/dev/kvm` exists (fastest) and `--platform=systrap` otherwise. KVM-less cloud VMs now get real Wall-1 kernel isolation.
+
 ## Security update — 2026-06-02 audit (v0.3.0)
 
 This release closes 1 critical + 8 highs + 6 mediums from the 2026-06-02 cross-repo security audit. The behavioral changes operators should know about:
