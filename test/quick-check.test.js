@@ -103,12 +103,12 @@ describe('quickCheck — dispatcher-specific checks', () => {
     );
   });
 
-  it('dispatcher checks include "network-allowlist"', async () => {
+  it('dispatcher checks include "proxy-only-network"', async () => {
     const { checks } = await quickCheck('dispatcher');
     const names = checks.map((c) => c.name);
     assert.ok(
-      names.includes('network-allowlist'),
-      `Expected 'network-allowlist' in dispatcher checks: ${JSON.stringify(names)}`,
+      names.includes('proxy-only-network'),
+      `Expected 'proxy-only-network' in dispatcher checks: ${JSON.stringify(names)}`,
     );
   });
 
@@ -134,12 +134,12 @@ describe('quickCheck — jailbox exclusions', () => {
     );
   });
 
-  it('jailbox checks do not include "network-allowlist"', async () => {
+  it('jailbox checks do not include "proxy-only-network"', async () => {
     const { checks } = await quickCheck('jailbox');
     const names = checks.map((c) => c.name);
     assert.ok(
-      !names.includes('network-allowlist'),
-      `'network-allowlist' should not appear in jailbox checks: ${JSON.stringify(names)}`,
+      !names.includes('proxy-only-network'),
+      `'proxy-only-network' should not appear in jailbox checks: ${JSON.stringify(names)}`,
     );
   });
 
