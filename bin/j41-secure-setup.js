@@ -1,10 +1,25 @@
 #!/usr/bin/env node
 
+import { readFileSync } from 'node:fs';
+
 import { setup, isInitialized } from '../lib/index.js';
 import { quickCheck } from '../lib/quick-check.js';
 import { selfTest } from '../lib/self-test.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
+
+/**
+ * The installed package version. Read from package.json at runtime rather than
+ * hardcoded, so `--version` can never drift from what npm actually installed.
+ */
+function readVersion() {
+  try {
+    const pkgPath = new URL('../package.json', import.meta.url);
+    return JSON.parse(readFileSync(pkgPath, 'utf8')).version;
+  } catch {
+    return 'unknown';
+  }
+}
 
 function printUsage() {
   console.log(`
@@ -22,6 +37,7 @@ Action flags:
 
 Other:
   --help, -h            Show this help message
+  --version, -v         Print the installed version
 
 Examples:
   j41-secure-setup --dispatcher
@@ -94,8 +110,15 @@ const hasCheck = args.includes('--check');
 const hasTest = args.includes('--test');
 const hasFix = args.includes('--fix');
 const hasHelp = args.includes('--help') || args.includes('-h');
+const hasVersion = args.includes('--version') || args.includes('-v') || args.includes('-V');
 
 const ALL_PRODUCTS = ['dispatcher', 'jailbox'];
+
+// --version wins over everything: it must never run setup as a side effect.
+if (hasVersion) {
+  console.log(readVersion());
+  process.exit(0);
+}
 
 // No arguments → print help
 if (args.length === 0 || hasHelp) {
